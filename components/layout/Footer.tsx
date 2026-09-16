@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, Facebook, Instagram, Youtube, Linkedin } from 'lucide-react';
+import { BookOpen, Globe, Link as LinkIcon, MessageCircle } from 'lucide-react';
 
 const footerLinks = {
   explore: [
@@ -84,10 +84,10 @@ export default function Footer() {
             {/* Socials */}
             <div className="flex items-center gap-3 mt-6">
               {[
-                { Icon: Facebook, label: 'Facebook', href: '#' },
-                { Icon: Instagram, label: 'Instagram', href: '#' },
-                { Icon: Youtube, label: 'YouTube', href: '#' },
-                { Icon: Linkedin, label: 'LinkedIn', href: '#' },
+                { Icon: Globe, label: 'Facebook', href: '#' },
+                { Icon: LinkIcon, label: 'Instagram', href: '#' },
+                { Icon: MessageCircle, label: 'YouTube', href: '#' },
+                { Icon: Globe, label: 'LinkedIn', href: '#' },
               ].map(({ Icon, label, href }) => (
                 <a
                   key={label}

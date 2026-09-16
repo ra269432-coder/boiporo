@@ -39,9 +39,9 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? 'bg-white/95 backdrop-blur-sm shadow-sm border-b border-[#E4DDD3]'
+            ? 'bg-white/90 backdrop-blur-xl shadow-[0_4px_30px_rgba(13,13,18,0.08)] border-b border-[#E5E5F0]'
             : 'bg-transparent'
         }`}
       >
@@ -49,32 +49,34 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2.5 group" aria-label="PoraBangla Home">
-              <div className="w-8 h-8 rounded-full bg-green flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105">
-                <BookOpen className="w-4 h-4 text-white" strokeWidth={2.5} />
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 group-hover:scale-105 group-hover:shadow-[0_0_16px_rgba(14,158,110,0.4)]"
+                style={{ background: 'linear-gradient(135deg, #0E9E6E, #065F46)' }}>
+                <BookOpen className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
               </div>
               <div className="leading-none">
                 <div
-                  className="text-[15px] font-bold text-[#1B5E3B] bangla-text leading-tight"
+                  className={`text-[15px] font-bold leading-tight bangla-text ${scrolled ? 'text-[#0D0D12]' : 'text-white'}`}
                   style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                 >
                   পড়ো বাংলা
                 </div>
-                <div className="text-[10px] uppercase tracking-[0.12em] text-[#6B6560] font-sans font-semibold">
+                <div className={`text-[10px] uppercase tracking-[0.14em] font-semibold ${scrolled ? 'text-[#6B6878]' : 'text-white/70'}`}>
                   PoraBangla
                 </div>
               </div>
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">
+            <nav className="hidden lg:flex items-center gap-5" aria-label="Main navigation">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-[0.85rem] font-medium text-charcoal hover:text-green transition-colors duration-200 relative group"
+                  className={`text-[0.82rem] font-semibold transition-colors duration-200 relative group ${scrolled ? 'text-[#1E1E2C] hover:text-[#0E9E6E]' : 'text-white/80 hover:text-white'}`}
                 >
                   {link.label}
-                  <span className="absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-green transition-all duration-200 group-hover:w-full" />
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-[1.5px] rounded-full transition-all duration-200 group-hover:w-full"
+                    style={{ background: 'linear-gradient(90deg, #0E9E6E, #34D399)' }} />
                 </Link>
               ))}
             </nav>
@@ -84,16 +86,17 @@ export default function Navbar() {
               {/* Search */}
               <button
                 onClick={() => setSearchOpen(true)}
-                className="p-2 text-charcoal hover:text-green transition-colors rounded-full hover:bg-[#EBF5EF]"
+                className={`p-2 rounded-lg transition-all duration-200 ${scrolled ? 'text-[#1E1E2C] hover:bg-[#F0FDF4] hover:text-[#0E9E6E]' : 'text-white/80 hover:text-white hover:bg-white/10'}`}
                 aria-label="Search"
               >
-                <Search className="w-4.5 h-4.5" size={18} />
+                <Search size={18} />
               </button>
 
               {/* CTA */}
               <Link
                 href="/about"
-                className="hidden md:inline-flex btn-primary text-sm py-2 px-5"
+                className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-px"
+                style={{ background: 'linear-gradient(135deg, #0E9E6E, #065F46)', boxShadow: '0 4px 14px rgba(14,158,110,0.4)' }}
               >
                 Join the Movement
               </Link>
@@ -101,7 +104,7 @@ export default function Navbar() {
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMobileOpen(true)}
-                className="lg:hidden p-2 text-charcoal hover:text-green transition-colors"
+                className={`lg:hidden p-2 rounded-lg transition-colors ${scrolled ? 'text-[#1E1E2C]' : 'text-white/80 hover:text-white'}`}
                 aria-label="Open menu"
                 aria-expanded={mobileOpen}
               >
@@ -129,7 +132,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-80 bg-white shadow-2xl flex flex-col lg:hidden"
+              className="fixed top-0 right-0 bottom-0 z-50 w-80 bg-white shadow-[0_0_80px_rgba(13,13,18,0.25)] flex flex-col lg:hidden"
             >
               <div className="flex items-center justify-between p-6 border-b border-[#E4DDD3]">
                 <Link href="/" onClick={() => setMobileOpen(false)}>
@@ -163,7 +166,7 @@ export default function Navbar() {
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className="block py-3 px-4 text-base font-medium text-charcoal hover:text-green hover:bg-[#EBF5EF] rounded-lg transition-colors duration-200"
+                      className="block py-3 px-4 text-base font-medium text-[#1E1E2C] hover:text-[#0E9E6E] hover:bg-[#F0FDF4] rounded-xl transition-colors duration-200"
                     >
                       {link.label}
                     </Link>
@@ -219,13 +222,14 @@ export default function Navbar() {
                     <X size={22} />
                   </button>
                 </div>
-                <div className="mt-4 pt-4 border-t border-[#E4DDD3]">
-                  <p className="text-xs text-muted uppercase tracking-widest font-semibold mb-3">Popular searches</p>
+                <div className="mt-4 pt-4 border-t border-[#E5E5F0]">
+                  <p className="text-xs text-[#6B6878] uppercase tracking-widest font-semibold mb-3">Popular searches</p>
                   <div className="flex flex-wrap gap-2">
                     {['Humayun Ahmed', 'পথের পাঁচালী', '1971', 'Poetry', 'Dhaka Readers', 'Book Launch'].map((term) => (
                       <button
                         key={term}
-                        className="px-3 py-1.5 text-sm bg-[#F0EBE1] text-charcoal rounded-full hover:bg-[#EBF5EF] hover:text-green transition-colors"
+                        className="px-3 py-1.5 text-sm rounded-full font-medium transition-all duration-200 hover:-translate-y-0.5"
+                        style={{ background: '#F0FDF4', color: '#065F46', border: '1px solid rgba(14,158,110,0.15)' }}
                       >
                         {term}
                       </button>

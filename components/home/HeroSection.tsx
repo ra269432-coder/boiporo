@@ -1,68 +1,141 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
-// Visual mosaic grid items
-const gridItems = [
-  { bg: '#1B5E3B', label: '২০০+', sub: 'বাংলাদেশি লেখক', col: 'col-span-1 row-span-2' },
-  { bg: '#2C2C2C', label: '১০,০০০+', sub: 'পাঠক', col: 'col-span-2 row-span-1' },
-  { bg: '#8B2335', label: '৫০০+', sub: 'পাঠ চক্র', col: 'col-span-1 row-span-1' },
-  { bg: '#B8944A', label: '২,০০০+', sub: 'বই', col: 'col-span-1 row-span-1' },
-  { bg: '#1B3A5E', label: '১০০+', sub: 'অনুষ্ঠান', col: 'col-span-2 row-span-1' },
+const stats = [
+  { num: '200+', label: 'Writers', labelBn: 'লেখক', color: '#0E9E6E', glow: 'rgba(14,158,110,0.4)' },
+  { num: '10K+', label: 'Readers', labelBn: 'পাঠক', color: '#34D399', glow: 'rgba(52,211,153,0.4)' },
+  { num: '500+', label: 'Clubs', labelBn: 'পাঠ চক্র', color: '#059669', glow: 'rgba(5,150,105,0.4)' },
+  { num: '2K+', label: 'Books', labelBn: 'বই', color: '#10B981', glow: 'rgba(16,185,129,0.4)' },
+  { num: '100+', label: 'Events', labelBn: 'অনুষ্ঠান', color: '#FCD34D', glow: 'rgba(252,211,77,0.4)' },
 ];
+
+const orbs = [
+  { w: 600, h: 600, x: -15, y: -20, color: 'radial-gradient(circle, rgba(14,158,110,0.18) 0%, transparent 70%)' },
+  { w: 500, h: 500, x: 65, y: 10, color: 'radial-gradient(circle, rgba(52,211,153,0.15) 0%, transparent 70%)' },
+  { w: 400, h: 400, x: 30, y: 55, color: 'radial-gradient(circle, rgba(5,150,105,0.12) 0%, transparent 70%)' },
+  { w: 350, h: 350, x: 80, y: 60, color: 'radial-gradient(circle, rgba(252,211,77,0.1) 0%, transparent 70%)' },
+];
+
+function FloatingOrb({ orb, i }: { orb: typeof orbs[0]; i: number }) {
+  return (
+    <motion.div
+      className="absolute rounded-full pointer-events-none"
+      style={{
+        width: orb.w,
+        height: orb.h,
+        left: `${orb.x}%`,
+        top: `${orb.y}%`,
+        background: orb.color,
+        filter: 'blur(40px)',
+        transform: 'translate(-50%, -50%)',
+      }}
+      animate={{
+        x: [0, 30, -20, 0],
+        y: [0, -25, 15, 0],
+        scale: [1, 1.08, 0.95, 1],
+      }}
+      transition={{
+        duration: 10 + i * 2,
+        repeat: Infinity,
+        ease: 'easeInOut',
+        delay: i * 1.5,
+      }}
+    />
+  );
+}
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#F8F5EF]">
-      {/* Subtle background texture */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}
+    <section
+      className="relative min-h-screen flex items-center overflow-hidden"
+    >
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/hero_bg.jpg')" }}
       />
 
-      <div className="container-site w-full pt-28 pb-16 md:pt-36 md:pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left: Text */}
+      {/* Full Green Overlay to let photo show through */}
+      <div className="absolute inset-0 z-0 bg-[#064E3B]/30" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#047857]/95 via-[#059669]/70 to-transparent" />
+
+      {/* Background orbs (reduced opacity) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {orbs.map((orb, i) => (
+          <FloatingOrb key={i} orb={{...orb, color: orb.color.replace('0.15', '0.1').replace('0.18', '0.1')}} i={i} />
+        ))}
+
+        {/* Grid texture */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(14,158,110,0.2) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(14,158,110,0.2) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        {/* Scanline top gradient */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[rgba(14,158,110,0.3)] to-transparent" />
+      </div>
+
+      <div className="container-site w-full pt-32 pb-20 md:pt-40 md:pb-24 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+          {/* ── LEFT: Text ── */}
           <div>
-            {/* Eyebrow */}
+            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex items-center gap-3 mb-8"
+              className="inline-flex items-center gap-2.5 mb-8 px-4 py-2 rounded-full border border-[#0E9E6E] bg-white shadow-sm"
             >
-              <span className="w-8 h-[1.5px] bg-[#1B5E3B]" />
-              <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-[#1B5E3B]">
-                Bangladesh&apos;s Reading Movement
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0E9E6E] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#059669]" />
+              </span>
+              <Sparkles size={12} className="text-[#059669]" />
+              <span className="text-[11px] uppercase tracking-[0.18em] font-bold text-[#059669]">
+                Bangladesh's Reading Movement
               </span>
             </motion.div>
 
-            {/* Bangla headline */}
+            {/* Main headline */}
             <motion.h1
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4rem] font-bold text-ink leading-[1.15] mb-6"
-              style={{
-                fontFamily: "'Hind Siliguri', 'Playfair Display', Georgia, serif",
-                letterSpacing: '-0.01em',
-              }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4.25rem] font-bold leading-[1.1] mb-6 drop-shadow-md"
+              style={{ fontFamily: "'Hind Siliguri', Georgia, serif" }}
             >
-              বাংলাদেশকে আবার
-              <span className="block text-[#1B5E3B]">বই পড়ার দেশ</span>
-              বানাই।
+              <span className="text-white drop-shadow-sm">বাংলাদেশকে </span>
+              <span className="text-white drop-shadow-sm">আবার </span>
+              <br />
+              <span
+                className="inline-block"
+                style={{
+                  background: 'linear-gradient(135deg, #0E9E6E, #047857)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                বই পড়ার দেশ
+              </span>
+              <br />
+              <span className="text-white drop-shadow-sm">বানাই।</span>
             </motion.h1>
 
             {/* English tagline */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="text-xl md:text-2xl font-serif text-charcoal mb-5 font-medium"
+              transition={{ duration: 0.7, delay: 0.25 }}
+              className="text-xl md:text-2xl font-medium text-white/90 mb-4 italic drop-shadow-sm"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
               Let&apos;s build a nation that reads.
@@ -73,7 +146,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.35 }}
-              className="text-base md:text-lg text-muted leading-relaxed max-w-lg mb-10"
+              className="text-base md:text-lg text-white/80 leading-relaxed max-w-lg mb-10 drop-shadow-sm font-medium"
             >
               Discover books, meet Bangladeshi writers, join reading communities, and make reading part of everyday life.
             </motion.p>
@@ -83,139 +156,201 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45 }}
-              className="flex flex-wrap items-center gap-4"
+              className="flex flex-wrap items-center gap-4 mb-12"
             >
-              <Link href="/books" className="btn-primary gap-2">
-                Explore Books
-                <ArrowRight size={16} />
+              <Link
+                href="/books"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg font-semibold text-white text-sm"
+                style={{
+                  background: 'linear-gradient(135deg, #0E9E6E, #065F46)',
+                  boxShadow: '0 4px 20px rgba(14,158,110,0.5), inset 0 1px 0 rgba(255,255,255,0.2)',
+                }}
+              >
+                Explore Books <ArrowRight size={16} />
               </Link>
-              <Link href="/about" className="btn-secondary">
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg font-semibold text-[#4B4B5A] text-sm border border-[#E5E5F0] bg-white hover:border-[#C5C5D8] hover:text-[#0D0D12] transition-all duration-200 shadow-sm hover:shadow-md"
+              >
                 Join the Movement
               </Link>
             </motion.div>
 
-            {/* Divider + tagline */}
+            {/* Tagline pill */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.65 }}
-              className="mt-12 pt-8 border-t border-[#E4DDD3] flex items-center gap-6"
+              className="flex items-center gap-4 flex-wrap"
             >
-              <div>
-                <p className="text-xs uppercase tracking-[0.15em] text-muted font-semibold mb-0.5">Our tagline</p>
-                <p
-                  className="text-[#1B5E3B] font-medium"
-                  style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
-                >
+              <div className="px-4 py-2 rounded-lg bg-white border border-[#E5E5F0] shadow-sm">
+                <span className="text-[#0E9E6E] font-medium text-sm" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
                   পড়ি, ভাবি, বদলাই।
-                </p>
+                </span>
               </div>
-              <span className="text-[#E4DDD3]">|</span>
-              <div>
-                <p className="text-xs uppercase tracking-[0.15em] text-muted font-semibold mb-0.5">In English</p>
-                <p className="text-charcoal font-medium italic" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <div className="h-5 w-px bg-[#E5E5F0] hidden sm:block" />
+              <div className="px-4 py-2 rounded-lg bg-white border border-[#E5E5F0] shadow-sm">
+                <span className="text-[#6B6878] italic text-sm" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Read. Think. Grow.
-                </p>
+                </span>
               </div>
             </motion.div>
           </div>
 
-          {/* Right: Visual grid mosaic */}
+          {/* ── RIGHT: Visual mosaic ── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.9, delay: 0.2 }}
             className="relative hidden lg:block"
           >
-            {/* Main grid */}
-            <div className="grid grid-cols-3 grid-rows-3 gap-3 h-[480px]">
-              {/* Large block — top left */}
+            {/* Stats mosaic */}
+            <div className="grid grid-cols-3 gap-3 h-[500px]">
+              {/* Big card — writers */}
               <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="col-span-1 row-span-2 rounded-xl overflow-hidden flex flex-col justify-end p-5"
-                style={{ backgroundColor: '#1B5E3B' }}
+                whileHover={{ scale: 1.03, y: -4 }}
+                transition={{ duration: 0.25 }}
+                className="col-span-1 row-span-2 rounded-2xl flex flex-col justify-between p-6 overflow-hidden relative cursor-default"
+                style={{
+                  background: 'white',
+                  border: '1px solid #E5E5F0',
+                  boxShadow: '0 4px 24px rgba(14,158,110,0.06)'
+                }}
               >
-                <div className="text-white/20 text-6xl font-serif mb-auto pt-3" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
-                  বই
-                </div>
-                <p className="text-3xl font-bold text-white font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>200+</p>
-                <p className="text-white/65 text-sm mt-1" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>বাংলাদেশি লেখক</p>
-              </motion.div>
-
-              {/* Wide block — top right */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="col-span-2 row-span-1 rounded-xl overflow-hidden flex items-center justify-between px-6 py-5"
-                style={{ backgroundColor: '#2C2C2C' }}
-              >
-                <div>
-                  <p className="text-4xl font-bold text-white font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>10,000+</p>
-                  <p className="text-white/55 text-sm mt-1">Active Readers</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-white/20 text-5xl font-serif" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>পাঠক</p>
-                </div>
-              </motion.div>
-
-              {/* Mid right blocks */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="col-span-1 row-span-1 rounded-xl flex flex-col justify-end p-4"
-                style={{ backgroundColor: '#8B2335' }}
-              >
-                <p className="text-2xl font-bold text-white font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>500+</p>
-                <p className="text-white/65 text-xs mt-0.5">Reading Clubs</p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="col-span-1 row-span-1 rounded-xl flex flex-col justify-end p-4"
-                style={{ backgroundColor: '#B8944A' }}
-              >
-                <p className="text-2xl font-bold text-white font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>2,000+</p>
-                <p className="text-white/65 text-xs mt-0.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>বই</p>
-              </motion.div>
-
-              {/* Bottom wide */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="col-span-2 row-span-1 rounded-xl flex items-center justify-between px-6 py-4"
-                style={{ backgroundColor: '#1B3A5E' }}
-              >
-                <div>
-                  <p className="text-3xl font-bold text-white font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>100+</p>
-                  <p className="text-white/55 text-sm">Events Yearly</p>
-                </div>
                 <div
-                  className="text-white/15 text-4xl font-bold"
+                  className="text-6xl font-bold text-[rgba(14,158,110,0.06)]"
                   style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
                 >
+                  বই
+                </div>
+                <div className="relative z-10">
+                  <p
+                    className="text-4xl font-bold mb-1"
+                    style={{
+                      background: 'linear-gradient(135deg, #0E9E6E, #047857)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    200+
+                  </p>
+                  <p className="text-[#4B4B5A] font-medium text-sm" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+                    বাংলাদেশি লেখক
+                  </p>
+                </div>
+                <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-full opacity-20 pointer-events-none"
+                  style={{ background: 'radial-gradient(circle, #34D399, transparent)' }} />
+              </motion.div>
+
+              {/* Wide top — readers */}
+              <motion.div
+                whileHover={{ scale: 1.02, y: -3 }}
+                transition={{ duration: 0.25 }}
+                className="col-span-2 rounded-2xl flex items-center justify-between px-7 py-5 relative overflow-hidden cursor-default"
+                style={{
+                  background: 'white',
+                  border: '1px solid #E5E5F0',
+                  boxShadow: '0 4px 24px rgba(212,130,26,0.06)'
+                }}
+              >
+                <div className="relative z-10">
+                  <p
+                    className="text-4xl font-bold"
+                    style={{
+                      color: '#D4821A',
+                      fontFamily: "'Playfair Display', serif",
+                    }}
+                  >
+                    10,000+
+                  </p>
+                  <p className="text-[#4B4B5A] font-medium text-sm mt-1">Active Readers</p>
+                </div>
+                <div className="text-6xl font-bold text-[rgba(212,130,26,0.06)]" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
+                  পাঠক
+                </div>
+              </motion.div>
+
+              {/* Mid — clubs */}
+              <motion.div
+                whileHover={{ scale: 1.03, y: -3 }}
+                transition={{ duration: 0.25 }}
+                className="col-span-1 rounded-2xl flex flex-col justify-end p-4 relative overflow-hidden cursor-default"
+                style={{
+                  background: 'white',
+                  border: '1px solid #E5E5F0',
+                  boxShadow: '0 4px 24px rgba(15,118,110,0.06)'
+                }}
+              >
+                <p className="text-2xl font-bold" style={{ color: '#0F766E' }}>
+                  500+
+                </p>
+                <p className="text-[#4B4B5A] font-medium text-xs mt-0.5">Reading Clubs</p>
+              </motion.div>
+
+              {/* Mid — books */}
+              <motion.div
+                whileHover={{ scale: 1.03, y: -3 }}
+                transition={{ duration: 0.25 }}
+                className="col-span-1 rounded-2xl flex flex-col justify-end p-4 relative overflow-hidden cursor-default"
+                style={{
+                  background: 'white',
+                  border: '1px solid #E5E5F0',
+                  boxShadow: '0 4px 24px rgba(5,150,105,0.06)'
+                }}
+              >
+                <p className="text-2xl font-bold" style={{ color: '#059669' }}>
+                  2,000+
+                </p>
+                <p className="text-[#4B4B5A] font-medium text-xs mt-0.5" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>বই</p>
+              </motion.div>
+
+              {/* Bottom wide — events */}
+              <motion.div
+                whileHover={{ scale: 1.02, y: -3 }}
+                transition={{ duration: 0.25 }}
+                className="col-span-2 rounded-2xl flex items-center justify-between px-7 py-4 relative overflow-hidden cursor-default"
+                style={{
+                  background: 'white',
+                  border: '1px solid #E5E5F0',
+                  boxShadow: '0 4px 24px rgba(6,78,59,0.06)'
+                }}
+              >
+                <div>
+                  <p className="text-3xl font-bold" style={{ color: '#064E3B', fontFamily: "'Playfair Display', serif" }}>
+                    100+
+                  </p>
+                  <p className="text-[#4B4B5A] text-sm">Events Yearly</p>
+                </div>
+                <div className="text-[rgba(6,78,59,0.06)] text-4xl font-bold" style={{ fontFamily: "'Hind Siliguri', sans-serif" }}>
                   অনুষ্ঠান
                 </div>
               </motion.div>
 
-              {/* Small corner */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-                className="col-span-1 row-span-1 rounded-xl flex flex-col justify-end p-4 border-2 border-dashed border-[#E4DDD3]"
-                style={{ backgroundColor: '#F8F5EF' }}
-              >
-                <p className="text-lg font-bold text-ink font-serif" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  +You
-                </p>
-                <p className="text-muted text-xs mt-0.5">Join us</p>
-              </motion.div>
+              {/* Join card */}
+              <Link href="/about" className="block w-full h-full">
+                <motion.div
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  transition={{ duration: 0.25 }}
+                  className="w-full h-full rounded-2xl flex flex-col items-center justify-center p-4 relative overflow-hidden cursor-pointer group"
+                  style={{
+                    background: '#F8F9FA',
+                    border: '1.5px dashed #C5C5D8',
+                  }}
+                >
+                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center mb-2 border border-[#E5E5F0] group-hover:bg-[#0E9E6E] transition-colors">
+                    <span className="text-[#6B6878] group-hover:text-white text-lg font-bold">+</span>
+                  </div>
+                  <p className="text-[#6B6878] group-hover:text-[#0E9E6E] transition-colors text-xs font-semibold">Join Us</p>
+                </motion.div>
+              </Link>
             </div>
 
-            {/* Decorative element */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full border-2 border-[#E4DDD3] opacity-50" />
-            <div className="absolute -bottom-6 -left-6 w-16 h-16 rounded-full bg-[#B8944A]/10" />
+            {/* Decorative rings */}
+            <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full border border-[rgba(14,158,110,0.15)] pointer-events-none" />
+            <div className="absolute -top-3 -right-3 w-20 h-20 rounded-full border border-[rgba(14,158,110,0.1)] pointer-events-none" />
+            <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full"
+              style={{ background: 'radial-gradient(circle, rgba(212,130,26,0.08), transparent)' }} />
           </motion.div>
         </div>
 
@@ -223,14 +358,16 @@ export default function HeroSection() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
         >
+          <span className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-semibold">Scroll</span>
           <motion.div
-            animate={{ y: [0, 6, 0] }}
+            animate={{ y: [0, 7, 0] }}
             transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+            className="w-5 h-8 rounded-full border border-white/15 flex items-start justify-center pt-1.5"
           >
-            <ChevronDown size={20} className="text-muted" />
+            <div className="w-1 h-1.5 rounded-full bg-[#34D399]" />
           </motion.div>
         </motion.div>
       </div>

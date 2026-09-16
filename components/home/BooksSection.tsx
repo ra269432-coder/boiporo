@@ -31,13 +31,14 @@ export default function BooksSection() {
   const displayBooks = filteredBooks.length > 0 ? filteredBooks : currentBooks.slice(0, 4);
 
   return (
-    <section className="section-padding bg-[#F8F5EF]">
+    <section className="section-padding bg-[#FAFAF8]">
       <div className="container-site">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <SectionHeader
             eyebrow="Curated Library"
             heading="Find Your Next Book"
             headingBn="আপনার পরের বই খুঁজুন"
+            accent="green"
           />
           <Link href="/books" className="btn-ghost flex-shrink-0 mb-4">
             View all books <ChevronRight size={14} />
@@ -45,16 +46,21 @@ export default function BooksSection() {
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-1 p-1 bg-[#F0EBE1] rounded-lg w-fit mb-8">
+        <div className="flex gap-1 p-1.5 rounded-xl w-fit mb-8 border border-[#E5E5F0]"
+          style={{ background: 'rgba(245,245,250,0.8)', backdropFilter: 'blur(8px)' }}>
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-                activeTab === tab.id
-                  ? 'bg-white text-ink shadow-sm'
-                  : 'text-muted hover:text-charcoal'
-              }`}
+              className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200"
+              style={activeTab === tab.id ? {
+                background: 'linear-gradient(135deg, #0E9E6E, #065F46)',
+                color: 'white',
+                boxShadow: '0 4px 12px rgba(14,158,110,0.35)',
+              } : {
+                color: '#6B6878',
+                background: 'transparent',
+              }}
             >
               {tab.label}
             </button>
@@ -67,11 +73,17 @@ export default function BooksSection() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`flex-shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200 ${
-                activeCategory === cat
-                  ? 'bg-[#1B5E3B] text-white border-[#1B5E3B]'
-                  : 'text-muted border-[#E4DDD3] hover:border-[#C8BFB4] hover:text-charcoal bg-white'
-              }`}
+              className="flex-shrink-0 px-4 py-1.5 text-xs font-semibold rounded-full border transition-all duration-200"
+              style={activeCategory === cat ? {
+                background: 'linear-gradient(135deg, #0E9E6E, #065F46)',
+                color: 'white',
+                border: 'none',
+                boxShadow: '0 3px 10px rgba(14,158,110,0.3)',
+              } : {
+                color: '#6B6878',
+                border: '1.5px solid #E5E5F0',
+                background: 'white',
+              }}
             >
               {cat}
             </button>
